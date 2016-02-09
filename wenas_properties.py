@@ -44,6 +44,7 @@ wTable = {"ASSESSOR_N": '', "NAME": '', "LASTNAME": '', "MAILING": '', "CITY": '
 # Find the situs address in the parcel property table
 def findSitus(inputID):
     propQry = """ "ASSESSOR_N" = '{0}'""".format(inputID)
+    fsSitus = ''
     arcpy.MakeTableView_management(propTable, "propparc", propQry)
     rotton = arcpy.SearchCursor("propparc")
     cnt = int(arcpy.GetCount_management("propparc").getOutput(0))
@@ -72,9 +73,8 @@ def findParty(inputID, fpSitus, fpMap, fpLook):
         for rot in rotton:
             lastname = rot.getValue("LAST_NAME")
             firstName = rot.getValue("FIRST_NAME")
-            lastName = rot.getValue("LAST_NAME")
             orgName = rot.getValue("ORG_NAME")
-            xName = firstName + " " + lastName + " " + orgName
+            xName = firstName + " " + lastname + " " + orgName
             mailing = rot.getValue("MAILING_AD")
             city = rot.getValue("MAILING_CI")
             state = rot.getValue("STATE")
@@ -98,7 +98,7 @@ def addTableRec(pId, name, lname, mail, city, state, zip, situs, lookup, map):
     #cxn.close()
 
 def createAccessDB():
-    #cxn = pyodbc.connect('DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=D:\\Data\\DDA\\Wenas\\WenasRecords.accdb; Provider=MSDASQL;')
+    #cxn = pyodbc.connect('DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=R:\\Public_Services\\WenasIrrigation\\WenasRecords.accdb; Provider=MSDASQL;')
     cursor = cxn.cursor()
     cursor2 = cxn.cursor()
     for table in cursor.tables():
@@ -113,9 +113,9 @@ def createAccessDB():
 # Program ----------------------------------------------------------------------
 try:
     # Delete the current WenasProperties table and create an empty new one
-    cxn = pyodbc.connect('DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=D:\\Data\\DDA\\Wenas\\WenasRecords.accdb; Provider=MSDASQL;')
+    cxn = pyodbc.connect('DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=R:\\Public_Services\\WenasIrrigation\\WenasRecords.accdb; Provider=MSDASQL;')
     createAccessDB()
-    print 'Database Created'
+    #print 'Database Created'
     # Create a layer (in memory) of parcels
     #sel3Count = int(arcpy.GetCount_management(taxSpatialRecord).getOutput(0))
     arcpy.MakeFeatureLayer_management(taxSpatialRecord, "fullparcels")
@@ -166,4 +166,3 @@ except arcpy.ExecuteError:
 #		del selobj
 #	if sel:
 #		del sel
-
